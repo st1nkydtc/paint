@@ -16,7 +16,7 @@ public class Paint
     private Color currentColor;
     private String drawMode = "line";
     private double size  = 50;
-    
+    private double p;
     
     
     
@@ -68,30 +68,72 @@ public class Paint
         UI.setLineWidth(w);
     }
     
+    public void doSelectRect(double s)
+    {
+        size = s;
+    }
+    
     /**
      * Mouse actioner
      */
     public void doMouse(String action, double x, double y) {
-        if (drawMode.equals("line")) {
-            if (action.equals("pressed")) {
-                this.startX = x;
-                this.startY = y;
-            // put your code here
-            
-           } else if (action.equals("released")) {
-               UI.drawLine(this.startX, this.startY, x, y);
+            if (drawMode.equals("line")) {
+                if (action.equals("pressed")) {
+                    this.startX = x;
+                    this.startY = y;
+                // put your code here
+                
+               } else if (action.equals("released")) {
+                   UI.drawLine(this.startX, this.startY, x, y);
+                }
             }
-        }
-        else if (drawMode.equals("oval"))
-        {
-            if (action.equals("clicked")) {
-                UI.fillOval(x - (size/2), y - (size/2), size, size);
-          }
-        } 
-        else {
-           if (action.equals("clicked")) {
-                UI.fillRect(x - (size/2), y - (size/2), size, size);
-          }  
+            else if (drawMode.equals("oval"))
+            {
+                if (action.equals("pressed")) {
+                    this.startX = x;
+                    this.startY = y;
+                    
+              }
+              else if (action.equals("released"))
+            {
+                if (x-startX <= 0)
+                {
+                    p = startX;
+                    startX = x;
+                    x = p;
+                }
+                if (y-startY <= 0)
+                {
+                    p = startY;
+                    startY = y;
+                    y = p;
+                }
+                UI.fillOval(this.startX, this.startY, x-startX, y-startY);
+            }
+            } 
+            else {
+               if (action.equals("pressed")) {
+                    this.startX = x;
+                    this.startY = y;
+                // put your code here
+                
+            }
+            else if (action.equals("released"))
+            {
+                if (x-startX <= 0)
+                {
+                    p = startX;
+                    startX = x;
+                    x = p;
+                }
+                if (y-startY <= 0)
+                {
+                    p = startY;
+                    startY = y;
+                    y = p;
+                }
+                UI.fillRect(this.startX, this.startY, x-startX, y-startY);
+            }
         }
     }
     
@@ -105,6 +147,7 @@ public class Paint
         UI.addButton("Oval",obj::doSelectOval);
         UI.addButton("Rectangle",obj::doSelectRect);
         UI.addButton("Line",obj::doSelectLine);
+        UI.addButton("Clear", UI::clearGraphics);
         UI.addSlider("Shape Size", 1, 1000, 500, obj::doSelectSize);
         UI.addSlider("Shape Width", 1, 1000, 500, obj::doSelectWidth);
     }
